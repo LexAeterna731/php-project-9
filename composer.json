@@ -1,0 +1,16 @@
+{
+    "name": "hexlet/code",
+    "description": "Page analyzer",
+    "autoload": {
+        "psr-4": {
+            "Hexlet\\Code\\": "src/"
+        }
+    },
+    "require": {
+        "slim/slim": "^4.11",
+        "slim/psr7": "^1.6"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7"
+    }
+}
