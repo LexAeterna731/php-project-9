@@ -12,14 +12,15 @@ if (file_exists($autoloadPath1)) {
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+use Slim\Views\PhpRenderer;
 
 $app = AppFactory::create();
+$renderer = new PhpRenderer(__DIR__ . '/../templates');
 
 $app->addErrorMiddleware(true, true, true);
 
-$app->get('/', function ($request, $response) {
-    $response->getBody()->write("Test Page.");
-    return $response;
+$app->get('/', function ($request, $response) use ($renderer) {
+    return $renderer->render($response, 'index.phtml');
 });
 
 $app->run();
