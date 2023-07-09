@@ -51,16 +51,20 @@ $app->get('/urls', function ($request, $response) use ($renderer, $router) {
 })->setName('urls');
 
 //get /urls/id
-$app->get('/urls/{id}', function ($request, $response, $args) use ($renderer, $flash) {
+$app->get('/urls/{id}', function ($request, $response, $args) use ($router, $renderer, $flash) {
     $id = htmlspecialchars($args['id']);
     $connection = Connection::get()->connect();
     $pdo = new Query($connection);
     if ($pdo->isId($id)) {
         [$data] = $pdo->getUrl($id);
         $messages = $flash->getMessages();
+        $pageUrl = $router->urlFor('url', ['id' => $id]);
+        $checks = $pdo->getChecks($id);
         $params = [
             'flash' => $messages,
-            'url' => $data
+            'url' => $data,
+            'pageUrl' => $pageUrl,
+            'checks' => $checks
         ];
         return $renderer->render($response, 'urls/show.phtml', $params);
     }
@@ -101,6 +105,18 @@ $app->post('/urls', function ($request, $response) use ($renderer, $flash, $rout
     }
 
     $redirectUrl = $router->urlFor('url', ['id' => $currentId]);
+    return $response->withRedirect($redirectUrl);
+});
+
+//post /urls/{url_id}/checks
+$app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($flash, $router) {
+    $id = htmlspecialchars($args['url_id']);
+    $connection = Connection::get()->connect();
+    $pdo = new Query($connection);
+    $creadedAt = Carbon::now();
+    $pdo->addCheck($id, $creadedAt);
+    $flash->addMessage('success', 'Страница успешно проверена');
+    $redirectUrl = $router->urlFor('url', ['id' => $id]);
     return $response->withRedirect($redirectUrl);
 });
 

@@ -24,7 +24,19 @@ class Query
     public function getUrls()
     {
         $stmt = $this->pdo->query(
-            "SELECT * FROM urls ORDER BY created_at DESC"
+            "SELECT
+                urls.id AS id,
+                urls.name AS name,
+                grouped_checks.created_at AS created_at
+            FROM urls
+            LEFT JOIN (
+                SELECT 
+                    MAX(url_checks.created_at) AS created_at,
+                    url_checks.url_id AS url_id
+                FROM url_checks
+                GROUP BY url_id
+            ) AS grouped_checks ON urls.id = grouped_checks.url_id
+            ORDER BY urls.created_at DESC"
         );
         $result = $stmt->fetchAll();
         return $result;
@@ -60,4 +72,23 @@ class Query
         return $result;
     }
     
+    //get all checks by id
+    public function getChecks(int $id)
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC"
+        );
+        $stmt->execute([$id]);
+        $result = $stmt->fetchAll();
+        return $result;
+    }
+
+    //add check to db
+    public function addCheck(int $id, $date)
+    {
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO url_checks (url_id, created_at) VALUES (?, ?)"
+        );
+        $stmt->execute([$id, $date]);
+    }
 }
