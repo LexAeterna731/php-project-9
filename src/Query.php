@@ -27,14 +27,18 @@ class Query
             "SELECT
                 urls.id AS id,
                 urls.name AS name,
-                grouped_checks.created_at AS created_at
+                grouped_checks.created_at AS created_at,
+                grouped_checks.status_code AS status_code
             FROM urls
             LEFT JOIN (
                 SELECT 
-                    MAX(url_checks.created_at) AS created_at,
-                    url_checks.url_id AS url_id
-                FROM url_checks
-                GROUP BY url_id
+                    url_checks.created_at AS created_at,
+                    url_checks.url_id AS url_id,
+                    url_checks.status_code AS status_code
+                FROM url_checks 
+                LEFT JOIN url_checks AS url_checks2
+                ON url_checks.url_id = url_checks2.url_id AND url_checks2.created_at > url_checks.created_at
+                WHERE url_checks2.created_at IS NULL
             ) AS grouped_checks ON urls.id = grouped_checks.url_id
             ORDER BY urls.created_at DESC"
         );
@@ -84,11 +88,11 @@ class Query
     }
 
     //add check to db
-    public function addCheck(int $id, $date)
+    public function addCheck(int $id, $date, int $statusCode)
     {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO url_checks (url_id, created_at) VALUES (?, ?)"
+            "INSERT INTO url_checks (url_id, created_at, status_code) VALUES (?, ?, ?)"
         );
-        $stmt->execute([$id, $date]);
+        $stmt->execute([$id, $date, $statusCode]);
     }
 }

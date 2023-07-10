@@ -17,6 +17,10 @@ use Slim\Flash\Messages;
 use Hexlet\Code\Connection;
 use Hexlet\Code\Query;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 
 session_start();
 
@@ -111,12 +115,29 @@ $app->post('/urls', function ($request, $response) use ($renderer, $flash, $rout
 //post /urls/{url_id}/checks
 $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($flash, $router) {
     $id = htmlspecialchars($args['url_id']);
+    $redirectUrl = $router->urlFor('url', ['id' => $id]);
     $connection = Connection::get()->connect();
     $pdo = new Query($connection);
+    [$data] = $pdo->getUrl($id);
+    $urlName = $data['name'];
+    $client = new Client([
+        'timeout' => 5.0
+    ]);
+
+    try {
+        $clientResp = $client->get($urlName);
+    } catch (ConnectException $e) {
+        $flash->addMessage('error', 'Произошла ошибка при проверке, не удалось подключиться');
+        return $response->withRedirect($redirectUrl);
+    } catch (RequestException $e) {
+        $flash->addMessage('warning', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
+        return $response->withRedirect($redirectUrl);
+    }
+
+    $statusCode = $clientResp->getStatusCode();
     $creadedAt = Carbon::now();
-    $pdo->addCheck($id, $creadedAt);
+    $pdo->addCheck($id, $creadedAt, $statusCode);
     $flash->addMessage('success', 'Страница успешно проверена');
-    $redirectUrl = $router->urlFor('url', ['id' => $id]);
     return $response->withRedirect($redirectUrl);
 });
 
