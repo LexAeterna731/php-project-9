@@ -43,9 +43,15 @@
                         <td>
                             <?= $check['status_code'] ?? '' ?>
                         </td>
-                        <td class="text-break"></td>
-                        <td class="text-break"></td>
-                        <td class="text-break"></td>
+                        <td class="text-break">
+                        <?= $check['h1'] ?? '' ?>
+                        </td>
+                        <td class="text-break">
+                        <?= $check['title'] ?? '' ?>
+                        </td>
+                        <td class="text-break">
+                        <?= $check['description'] ?? '' ?>
+                        </td>
                         <td>
                             <?= $check['created_at'] ?>
                         </td>

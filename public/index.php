@@ -21,6 +21,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use DiDom\Document;
 
 session_start();
 
@@ -136,7 +137,12 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
 
     $statusCode = $clientResp->getStatusCode();
     $creadedAt = Carbon::now();
-    $pdo->addCheck($id, $creadedAt, $statusCode);
+    $htmlBody = $clientResp->getBody()->getContents();
+    $document = new Document($htmlBody);
+    $h1 = optional($document->first('h1'))->text();
+    $title = optional($document->first('title'))->text();
+    $description = optional($document->first('meta[name=description]'))->getAttribute('content');
+    $pdo->addCheck($id, $creadedAt, $statusCode, $h1, $title, $description);
     $flash->addMessage('success', 'Страница успешно проверена');
     return $response->withRedirect($redirectUrl);
 });
