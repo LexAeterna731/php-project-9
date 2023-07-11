@@ -2,7 +2,7 @@
 
 namespace Hexlet\Code\Tests;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Hexlet\Code\Parser;
 
 class ParserTest extends TestCase
@@ -28,7 +28,7 @@ class ParserTest extends TestCase
         $this->fileDesc = 'description.html';
     }
 
-    private function getFixturePath($fixture): string
+    private function getFixturePath(string $fixture): string
     {
         $parts = [__DIR__, 'fixtures', $fixture];
         return implode('/', $parts);
@@ -37,11 +37,11 @@ class ParserTest extends TestCase
     public function testParser(): void
     {
         $withDescription = file_get_contents($this->getFixturePath($this->fileDesc));
-        $parserD = new Parser($withDescription);
+        $parserD = new Parser((string) $withDescription);
         $this->assertEquals($this->descData, $parserD->getData());
 
         $noDescription = file_get_contents($this->getFixturePath($this->fileNoDesc));
-        $parserN = new Parser($noDescription);
+        $parserN = new Parser((string) $noDescription);
         $this->assertEquals($this->noDescData, $parserN->getData());
     }
 }
