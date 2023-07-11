@@ -4,7 +4,7 @@ namespace Hexlet\Code;
 
 class Query
 {
-    private \PDO $pdo;
+    private PDO $pdo;
 
     public function __construct(\PDO $pdo)
     {
@@ -12,7 +12,7 @@ class Query
     }
 
     //add url to db
-    public function addUrl(string $url, timestamp $date)
+    public function addUrl(string $url, Carbon\Carbon $date)
     {
         $stmt = $this->pdo->prepare(
             "INSERT INTO urls (name, created_at) VALUES (?, ?)"
@@ -88,7 +88,7 @@ class Query
     }
 
     //add check to db
-    public function addCheck(int $id, timestamp $date, int $statusCode, string $h1, string $title, string $description)
+    public function addCheck(int $id, Carbon\Carbon $date, int $statusCode, string $h1, string $title, string $description)
     {
         $stmt = $this->pdo->prepare(
             "INSERT INTO url_checks (url_id, created_at, status_code, h1, title, description) VALUES (?, ?, ?, ?, ?, ?)"
