@@ -88,7 +88,7 @@ class Query
     }
 
     //add check to db
-    public function addCheck(int $id, \Carbon\Carbon $date, int $statusCode, string $h1, string $title, string $description)
+    public function addCheck(int $id, \Carbon\Carbon $date, int $statusCode, ?string $h1, ?string $title, ?string $description)
     {
         $stmt = $this->pdo->prepare(
             "INSERT INTO url_checks (url_id, created_at, status_code, h1, title, description) VALUES (?, ?, ?, ?, ?, ?)"
