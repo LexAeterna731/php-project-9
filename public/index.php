@@ -16,12 +16,12 @@ use Slim\Views\PhpRenderer;
 use Slim\Flash\Messages;
 use Hexlet\Code\Connection;
 use Hexlet\Code\Query;
+use Hexlet\Code\Parser;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
-use DiDom\Document;
 
 session_start();
 
@@ -138,10 +138,8 @@ $app->post('/urls/{url_id:[0-9]+}/checks', function ($request, $response, $args)
     $statusCode = $clientResp->getStatusCode();
     $creadedAt = Carbon::now();
     $htmlBody = $clientResp->getBody()->getContents();
-    $document = new Document($htmlBody);
-    $h1 = optional($document->first('h1'))->text();
-    $title = optional($document->first('title'))->text();
-    $description = optional($document->first('meta[name=description]'))->getAttribute('content');
+    $parser = new Parser($htmlBody);
+    [$h1, $title, $description] = $parser->getData();
     $pdo->addCheck($id, $creadedAt, $statusCode, $h1, $title, $description);
     $flash->addMessage('success', 'Страница успешно проверена');
     return $response->withRedirect($redirectUrl);
