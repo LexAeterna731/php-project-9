@@ -57,7 +57,7 @@ $app->get('/urls', function ($request, $response) use ($renderer, $router) {
 
 //get /urls/id
 $app->get('/urls/{id:[0-9]+}', function ($request, $response, $args) use ($router, $renderer, $flash) {
-    $id = htmlspecialchars($args['id']);
+    $id = (int) htmlspecialchars($args['id']);
     $connection = Connection::get()->connect();
     $pdo = new Query($connection);
     if ($pdo->isId($id)) {
@@ -115,7 +115,7 @@ $app->post('/urls', function ($request, $response) use ($renderer, $flash, $rout
 
 //post /urls/{url_id}/checks
 $app->post('/urls/{url_id:[0-9]+}/checks', function ($request, $response, $args) use ($flash, $router) {
-    $id = htmlspecialchars($args['url_id']);
+    $id = (int) htmlspecialchars($args['url_id']);
     $redirectUrl = $router->urlFor('url', ['id' => $id]);
     $connection = Connection::get()->connect();
     $pdo = new Query($connection);
