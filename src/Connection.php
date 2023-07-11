@@ -13,8 +13,8 @@ final class Connection
 
         $databaseUrl = parse_url($_ENV['DATABASE_URL']);
         $dsn = sprintf(
-            "%s:host=%s;port=%d;dbname=%s;user=%s;password=%s",
-            $databaseUrl['scheme'],
+            "psql:host=%s;port=%d;dbname=%s;user=%s;password=%s",
+            /*$databaseUrl['scheme'],*/
             $databaseUrl['host'],
             $databaseUrl['port'],
             ltrim($databaseUrl['path'], '/'),
