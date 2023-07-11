@@ -63,7 +63,7 @@ $app->get('/urls/{id:[0-9]+}', function ($request, $response, $args) use ($route
     if ($pdo->isId($id)) {
         [$data] = $pdo->getUrl($id);
         $messages = $flash->getMessages();
-        $pageUrl = $router->urlFor('url', ['id' => $id]);
+        $pageUrl = $router->urlFor('url', ['id' => (string) $id]);
         $checks = $pdo->getChecks($id);
         $params = [
             'flash' => $messages,
@@ -116,7 +116,7 @@ $app->post('/urls', function ($request, $response) use ($renderer, $flash, $rout
 //post /urls/{url_id}/checks
 $app->post('/urls/{url_id:[0-9]+}/checks', function ($request, $response, $args) use ($flash, $router) {
     $id = (int) htmlspecialchars($args['url_id']);
-    $redirectUrl = $router->urlFor('url', ['id' => $id]);
+    $redirectUrl = $router->urlFor('url', ['id' => (string) $id]);
     $connection = Connection::get()->connect();
     $pdo = new Query($connection);
     [$data] = $pdo->getUrl($id);
