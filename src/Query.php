@@ -75,7 +75,7 @@ class Query
         $result = $data !== false ? $data : null;
         return $result;
     }
-    
+
     //get all checks by id
     public function getChecks(int $id)
     {
