@@ -5,7 +5,7 @@ namespace Hexlet\Code\Tests;
 use PHPUnit\Framework\TestCase;
 use Hexlet\Code\Parser;
 
-class ParserTest extends PHPUnit\Framework\TestCase
+class ParserTest extends TestCase
 {
     private array $noDescData;
     private array $descData;
